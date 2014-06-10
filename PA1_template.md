@@ -3,7 +3,8 @@
 
 ## Loading and preprocessing the data
 First, unzip the .csv file and read it into R.  
-```{r}
+
+```r
 unzip("activity.zip", files = "activity.csv")
 data <- read.csv("activity.csv")
 ```

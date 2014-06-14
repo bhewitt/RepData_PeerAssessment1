@@ -5,18 +5,73 @@
 First, unzip the .csv file and read it into R.  
 
 ```r
+library("reshape2")
 unzip("activity.zip", files = "activity.csv")
 data <- read.csv("activity.csv")
 ```
-  
-Then process the dates as dates and the time intervals as time.
 
 ## What is mean total number of steps taken per day?
+First sum the number of steps per day.
 
+```r
+datamelt <- melt(data, id = "date", measure.vars = "steps")
+sumSteps <- dcast(datamelt, date ~ variable, sum)
+```
+Plot
+
+```r
+hist(sumSteps$steps, xlab = "Steps", main = "Total Steps Taken")
+```
+
+![plot of chunk unnamed-chunk-3](figure/unnamed-chunk-3.png) 
+  
+  
+Find the mean and median
+
+```r
+mean(sumSteps$steps, na.rm = TRUE)
+```
+
+```
+## [1] 10766
+```
+
+```r
+median(sumSteps$steps, na.rm = TRUE)
+```
+
+```
+## [1] 10765
+```
 
 
 ## What is the average daily activity pattern?
 
+
+```r
+datamelt2 <- melt(data, id = "interval", measure.vars = "steps", na.rm = TRUE)
+avgSteps <- dcast(datamelt2, interval ~ variable, mean)
+```
+
+Make the plot
+  
+
+```r
+plot(avgSteps, type = "l")
+```
+
+![plot of chunk unnamed-chunk-6](figure/unnamed-chunk-6.png) 
+  
+Find the interval on average across all days contains the maximum number of steps
+
+```r
+avgSteps[avgSteps$steps==max(avgSteps$steps),]
+```
+
+```
+##     interval steps
+## 104      835 206.2
+```
 
 
 ## Imputing missing values

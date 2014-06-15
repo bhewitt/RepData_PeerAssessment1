@@ -227,5 +227,5 @@ g+geom_line()+facet_grid(weekday~.)+
 ```
 
 ![plot of chunk unnamed-chunk-12](figure/unnamed-chunk-12.png) 
-
-
+  
+As you can see above, the activity patterns are quite different during the weedays and weekends. during the work week, activity begins earlier, most of the activity is found in the beginning of the day, and the max average steps during a 5-minute interval is higher than during the weekend. The weekend activity begins later, and is distributed more evenly throughout the day.

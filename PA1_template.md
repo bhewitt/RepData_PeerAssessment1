@@ -20,7 +20,7 @@ sumSteps <- dcast(datamelt, date ~ variable, sum)
 Plot
 
 ```r
-hist(sumSteps$steps, xlab = "Steps", main = "Total Steps Taken")
+hist(sumSteps$steps, xlab = "Steps", main = "Total Steps Taken", col = "gray")
 ```
 
 ![plot of chunk unnamed-chunk-3](figure/unnamed-chunk-3.png) 
@@ -57,10 +57,21 @@ Make the plot
   
 
 ```r
-plot(avgSteps, type = "l", main = "Step Taken Each Interval\nAveraged Across all Days")
+library("ggplot2")
+g <- ggplot(avgSteps, aes(interval, steps))
+g + geom_line(colour = "blue")+
+        labs(title = "Step Taken Each Interval\nAveraged Across all Days",
+             x="Interval", y = "Steps")
 ```
 
-![plot of chunk unnamed-chunk-6](figure/unnamed-chunk-6.png) 
+![plot of chunk unnamed-chunk-6](figure/unnamed-chunk-61.png) 
+
+```r
+plot(avgSteps, type = "l", 
+     main = "Step Taken Each Interval\nAveraged Across all Days")
+```
+
+![plot of chunk unnamed-chunk-6](figure/unnamed-chunk-62.png) 
   
 Find the interval on average across all days contains the maximum number of steps
 
@@ -76,7 +87,9 @@ avgSteps[avgSteps$steps==max(avgSteps$steps),]
 
 ## Imputing missing values
 Calculate the total number of rows with missing values.
-The easiest way to do that is to use the is.na() function. Rows that are NA are marked as TRUE or 1, so we can sum those to get the total number of rows containing NAs.
+The easiest way to do that is to use the is.na() function. Rows that are NA are  
+marked as TRUE or 1, so we can sum those to get the total number of rows  
+containing NAs.
   
 
 ```r
@@ -116,7 +129,8 @@ data2 <- data
 data2$steps <- imputedsteps
 ```
   
-In the original data set, there were 2304 NAs in the steps variable. Count the NAs in the new data set to be sure they were filled in.
+In the original data set, there were 2304 NAs in the steps variable. Count the  
+NAs in the new data set to be sure they were filled in.
 
 
 ```r
@@ -148,6 +162,27 @@ median(sumSteps2$steps)
 ## [1] 10766
 ```
 
-The change in data did not have an impact on the average, but it did bring the median up from 10765 to 10766
+The change in data did not have an impact on the average, but it did bring the  
+median up from 10765 to 10766
 
 ## Are there differences in activity patterns between weekdays and weekends?
+Using the dataset with the imputed values, add find out whether the dates are  
+weekdays are not
+
+```r
+library(lubridate)
+data2$date <- ymd(data2$date)
+wday <- as.integer(weekdays(data2$date)=="Saturday"|weekdays(data2$date)=="Sunday")
+data2$weekday <- as.factor(as.character(wday))
+levels(data2$weekday) <- c("weekday", "weekend")
+weekdaymelt <- melt(data2, id = c("weekday", "interval"), measure.vars = "steps")
+avgSteps2 <- dcast(weekdaymelt, weekday + interval ~ variable, mean)
+g<-ggplot(avgSteps2, aes(interval, steps))
+g+geom_line()+facet_grid(weekday~.)+
+        labs(title = "Activity Pattern\nWeekend and Weekday",
+             x="Interval", y = "Steps")
+```
+
+![plot of chunk unnamed-chunk-14](figure/unnamed-chunk-14.png) 
+
+
